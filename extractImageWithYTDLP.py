@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 import yt_dlp
 import subprocess
 import csv
@@ -15,7 +16,7 @@ def get_video_duration(url):
 def get_frame(url, start_time, output_file):
     command = (
         f'yt-dlp -f best -o - "{url}" | '
-        f'ffmpeg -hide_banner -loglevel error -ss {start_time} -i pipe:0 -vframes 1 {output_file}'
+        f'ffmpeg -hide_banner -loglevel error -ss {start_time} -t 5 -i pipe:0 -vframes 1 "{output_file}"'
     )
     subprocess.call(command, shell=True)
     
@@ -33,9 +34,9 @@ with open('videos.csv', mode='r') as video:
         
         duration = get_video_duration(url)
         
-        first_second = 0.1
-        middle_second = duration // 2
-        last_second = duration - 1
+        first_second = duration * .01
+        middle_second = duration *.5
+        last_second = duration * .999
         
         # temporarily making images of the files
         first_file = f"{video_id}_first.jpg"
