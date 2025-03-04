@@ -1,6 +1,7 @@
 import cv2
 import csv
 
+
 video = cv2.VideoCapture('test.mp4')
 total_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
 
@@ -13,8 +14,8 @@ for frame_index in frame_indices:
     video.set(cv2.CAP_PROP_POS_FRAMES, frame_index)
     success, image = video.read()
     if success:
-        cv2.imwrite(f"frame_{count}.jpg", image)
         count += 1
+        cv2.imwrite(f"frame_{count}.jpg", image)
     else:
         print(f"Failed to retrieve frame at {frame_index}.")
 video.release()
