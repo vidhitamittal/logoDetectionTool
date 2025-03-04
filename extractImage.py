@@ -1,16 +1,6 @@
 import cv2
 import csv
 
-# with open('videos.csv', mode ='r')as file: 
-#   csvFile = csv.reader(file)
-#   for row in csvFile:
-#     for col in row:
-#         url = "https://www.youtube.com/watch?v=" + col
-#         video = cv2.VideoCapture(url)
-
-# the code below works on downloaded videos (e.g. test.mp4)
-# I will work on the part above where I can use the video ID's from the csv and 
-# download the files to access them within this code
 
 video = cv2.VideoCapture('test.mp4')
 total_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
