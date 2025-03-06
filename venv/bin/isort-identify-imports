@@ -1,4 +1,4 @@
-#!/Users/jpineiro/Documents/GitHub/logoDetectionTool/venv/bin/python3.13
+#!/Users/vidhitamittal/Desktop/logoDetectionTool/venv/bin/python3.13
 # -*- coding: utf-8 -*-
 import re
 import sys

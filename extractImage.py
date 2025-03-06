@@ -1,6 +1,5 @@
 # pylint: disable=no-member
 import cv2
-import csv
 
 
 video = cv2.VideoCapture('test.mp4')

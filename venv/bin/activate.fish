@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV /Users/jpineiro/Documents/GitHub/logoDetectionTool/venv
+set -gx VIRTUAL_ENV /Users/vidhitamittal/Desktop/logoDetectionTool/venv
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/"bin $PATH
