@@ -14,7 +14,7 @@ def get_video_duration(url):
         return info.get("duration", 0)
 
 def get_frame(url, start_time, output_file):
-    # Download a small segment (for example, 5 seconds) starting at start_time.
+    # download a small segment .05 seconds starting at start_time.
     segment_duration = .05
     end_time = start_time + segment_duration
     segment_file = "temp_segment.mp4"
@@ -85,9 +85,8 @@ with open('videos.csv', mode='r') as video:
         os.remove(middle_file)
         os.remove(last_file)
         
-        if count % 5 == 0:
-            print(f'🪺 Sleep #{count//5}: {count} videos finished')
-            time.sleep(10)
+        print(f'🪺 Sleep #{count} videos finished')
+        time.sleep(2)
         
 print("success")
         
