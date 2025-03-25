@@ -2,18 +2,18 @@ import yt_dlp
 import cv2
 import os
 import csv
+import time
 
-def download_video(url, output_path = 'downloaded_video.mp4'):
-    url = 'https://www.youtube.com/watch?v=' + url
+def download_video(id, output_path = 'downloaded_video.mp4'):
+    url = 'https://www.youtube.com/watch?v=' + id
     ydl_opts = {
         'outtmpl': output_path,
-        'format': 'best',
+        'format': '     best',
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info_dict = ydl.extract_info(url, download = True)
         video_file = ydl.prepare_filename(info_dict)
-    
     return video_file
 
 def get_video_dimensions(video_file):
@@ -44,6 +44,7 @@ def process_csv(input_csv, output_csv):
             width, height = get_video_dimensions(downloaded_video)
             writer.writerow([url, width, height])
             os.remove(downloaded_video)
+            time.sleep(2)
 
 def main():
     input_directory = 'C:\\Users\\echen\\OneDrive\\Desktop\\umass\\2.4 spring 2025\\Computer Science 396A Independent Study\\logoDetectionTool\\videos.csv'
