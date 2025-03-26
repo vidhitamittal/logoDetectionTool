@@ -3,31 +3,44 @@ import cv2
 import os
 import csv
 import time
+import tempfile
+import subprocess
 
-def download_video(id, output_path = 'downloaded_video.mp4'):
+def get_frame_from_vid(id, output_path = 'sampleframe.jpg'):
     url = 'https://www.youtube.com/watch?v=' + id
     ydl_opts = {
-        'outtmpl': output_path,
-        'format': '     best',
+        'format': 'best',
+        'quiet': True,
+        'noplaylist': True,
+        'extractaudio': False,
+        'outtmpl': tempfile.mktemp()
     }
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl: # omg they made streams from cs220 in real life
         info_dict = ydl.extract_info(url, download = True)
         video_file = ydl.prepare_filename(info_dict)
-    return video_file
 
-def get_video_dimensions(video_file):
-    cap = cv2.VideoCapture(video_file)
+    video_length_cmd = [
+        'ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries', 'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', video_file
+    ]
+    video_length = float(subprocess.check_output(video_length_cmd).strip())
+
+    capture_cmd = [
+        'ffmpeg', '-i', video_file, '-vf', f"select='eq(n\,{video_length / 2})'", '-vsync', 'vfr', output_path
+    ]
+    subprocess.run(capture_cmd, check = True)
+    subprocess.run(['rm', video_file])
+    return output_path
+
+def get_frame_height(image_path): # image as path
+    image = cv2.imread(image_path)
+    if image is not None:
+        return image.shape[0]
     
-    if not cap.isOpened():
-        print("nope")
-        return None, None
-    
-    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    
-    cap.release()
-    return width, height
+def get_frame_width(image_path): # image as path
+    image = cv2.imread(image_path)
+    if image is not None:
+        return image.shape[1]
 
 def process_csv(input_csv, output_csv):
     with open(input_csv, 'r') as infile, open(output_csv, 'w', newline='') as outfile:
@@ -40,10 +53,14 @@ def process_csv(input_csv, output_csv):
         for video_id in row:
             url = video_id
             print(f"Processing {url}...")
-            downloaded_video = download_video(url)
-            width, height = get_video_dimensions(downloaded_video)
-            writer.writerow([url, width, height])
-            os.remove(downloaded_video)
+            try:
+                frame_path = get_frame_from_vid(url)
+                height = get_frame_height(frame_path)
+                width = get_frame_width(frame_path)
+                writer.writerow([url, width, height])
+                os.remove(frame_path)
+            except:
+                print('no lol')
             time.sleep(2)
 
 def main():
