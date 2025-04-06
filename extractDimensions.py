@@ -9,7 +9,7 @@ import subprocess
 def get_frame_from_vid(id, output_path = 'sampleframe.jpg'):
     url = 'https://www.youtube.com/watch?v=' + id
     ydl_opts = {
-        'format': 'best',
+        'format': 'worstvideo',
         'quiet': True,
         'noplaylist': True,
         'extractaudio': False,
