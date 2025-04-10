@@ -136,23 +136,6 @@ def find_crop(url):
 
 
 
-
-
-
-def find_crop(url):
-# finish our actual command, figure out output of it
-#at least hold: original video dimensions, cropped video dimensions 
-#output gives us cropped dimensions, does not crop actual video 
-   
-   
-    commandCrop = (
-        'ffmpeg', '-i', '{url}', '-vf', 'cropdetect','metadata=mode=print', '-f', 'null -'
-
-    )
-    subprocess.call(commandCrop, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-
-
 # this is gonna have arrays of each videos first, middle, and last frames    
 video_frames = []
 
@@ -169,8 +152,6 @@ with open('videos.csv', mode='r') as video:
         print(f'---------------------------------------------\n🎬 Starting video #{count}\n---------------------------------------------')
         
 
-
-        find_crop(url)
 
       
         find_crop(url)
