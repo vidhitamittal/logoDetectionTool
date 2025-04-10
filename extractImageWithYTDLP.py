@@ -109,23 +109,23 @@ def get_video_duration(url):
 
 
 
-def find_crop(url):
+def find_crop(url, video_id):
 # finish our actual command, figure out output of it
 #at least hold: original video dimensions, cropped video dimensions 
 #output gives us cropped dimensions, does not crop actual video 
    
    
     commandCrop = (
-        'ffmpeg', '-i', f'{url}', '-vf', 'cropdetect','metadata=mode=print', '-f' #, 'null -'
+        'ffmpeg', '-i', f'{video_id}.mp4', '-vf', 'cropdetect',  '-frames:v', '100', '-f' #, 'null -'
 
     )
-    result = subprocess.run(commandCrop, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, test=True) # DEVNULL
+    result = subprocess.run(commandCrop, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True) # DEVNULL
 
     crop_values = re.findall(r'crop=\d+:\d+:\d+:\d+', result.stderr)
-
+    print(crop_values)
     # Just get the most frequent or last one
     if crop_values:
-        print(f"🔍 Suggested crop for {video_id}: {crop_values[-1]}")
+        print(f"🔍 Suggested crop for {video_id}: {crop_values}")
     else:
         print(f"⚠️ No crop suggestion found for {video_id}")
 
@@ -154,7 +154,7 @@ with open('videos.csv', mode='r') as video:
 
 
       
-        find_crop(url)
+        find_crop(url, video_id)
 
         
         print(f'🪺 Sleep #{count} videos finished')
