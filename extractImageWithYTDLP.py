@@ -5,6 +5,7 @@ import csv
 import cv2
 import os
 import time
+import re
 
 # Gets the metadata with the ytdlp extract info stuff and then it gets the duration field which gives the duration
 def get_video_duration(url):
@@ -22,10 +23,24 @@ def find_crop(url):
    
    
     commandCrop = (
-        'ffmpeg', '-i', '{url}', '-vf', 'cropdetect','metadata=mode=print', '-f', 'null -'
+        'ffmpeg', '-i', f'{url}', '-vf', 'cropdetect','metadata=mode=print', '-f' #, 'null -'
 
     )
-    subprocess.call(commandCrop, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    result = subprocess.run(commandCrop, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, test=True) # DEVNULL
+
+    crop_values = re.findall(r'crop=\d+:\d+:\d+:\d+', result.stderr)
+
+    # Just get the most frequent or last one
+    if crop_values:
+        print(f"🔍 Suggested crop for {video_id}: {crop_values[-1]}")
+    else:
+        print(f"⚠️ No crop suggestion found for {video_id}")
+
+    # Clean up
+    if os.path.exists(f'{video_id}.mp4'):
+        os.remove(f'{video_id}.mp4')
+
+
 
 
 
@@ -44,7 +59,8 @@ with open('videos.csv', mode='r') as video:
         url = "https://www.youtube.com/watch?v=" + video_id
         print(f'---------------------------------------------\n🎬 Starting video #{count}\n---------------------------------------------')
         
-      
+
+
         find_crop(url)
 
         
