@@ -1,3 +1,4 @@
+
 # # pylint: disable=no-member
 # import yt_dlp
 # import subprocess
@@ -113,26 +114,49 @@ def find_crop(url, video_id):
 # finish our actual command, figure out output of it
 #at least hold: original video dimensions, cropped video dimensions 
 #output gives us cropped dimensions, does not crop actual video 
+    output_file = "temp_segment.mp4"
+    
+    ydl_opts = {
+        'quiet': True,
+        'no_warnings': True,
+        'outtmpl': output_file
+       # 'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4'  # Optional: gets best MP4
+    }
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([url])
+    
+  
    
-   
+   #we need to download each video, pass into crop detect
     commandCrop = (
-        'ffmpeg', '-i', f'{video_id}.mp4', '-vf', 'cropdetect',  '-frames:v', '100', '-f' #, 'null -'
+        'ffmpeg', '-i', output_file, '-vf', 'cropdetect',  '-frames:v', '100', '-f' , 'null -'
 
     )
-    result = subprocess.run(commandCrop, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True) # DEVNULL
+    subprocess.run(commandCrop)
+    
+    if os.path.exists(output_file):
+        os.remove(output_file)
+        print("Temporary video deleted.")
+    
+    #boolean in csv: is it cropped. log the console output there. handle errors properly if ur fancy?
+    #crop detect is giving dimensions in the console. to catch this, 
+    # u can use dummy variables, 
+    
+    
+    #result = subprocess.run(commandCrop, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True) # DEVNULL
 
-    crop_values = re.findall(r'crop=\d+:\d+:\d+:\d+', result.stderr)
-    print(crop_values)
+    #crop_values = re.findall(r'crop=\d+:\d+:\d+:\d+', result.stderr)
+    #print(crop_values)
     # Just get the most frequent or last one
-    if crop_values:
-        print(f"🔍 Suggested crop for {video_id}: {crop_values}")
-    else:
-        print(f"⚠️ No crop suggestion found for {video_id}")
+    #if crop_values:
+    #    print(f"Suggested crop for {video_id}: {crop_values}")
+    #else:
+    #    print(f"No crop suggestion found for {video_id}")
 
     # Clean up
-    if os.path.exists(f'{video_id}.mp4'):
-        os.remove(f'{video_id}.mp4')
-
+    #if os.path.exists(f'{video_id}.mp4'):
+    #    os.remove(f'{video_id}.mp4')
+#check onedrive? consider turning that off for this project 
 
 
 
@@ -140,7 +164,7 @@ def find_crop(url, video_id):
 video_frames = []
 
 with open('videos.csv', mode='r') as video:
-    
+    #goes through each video in videos.csv
     the_row = next(csv.reader(video))
     count = 0
     
@@ -150,10 +174,10 @@ with open('videos.csv', mode='r') as video:
         
         url = "https://www.youtube.com/watch?v=" + video_id
         print(f'---------------------------------------------\n🎬 Starting video #{count}\n---------------------------------------------')
-        
+        #creates url
 
 
-      
+      # save output of find_crop 
         find_crop(url, video_id)
 
         
