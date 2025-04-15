@@ -14,7 +14,7 @@ def get_video_duration(url):
         info = yt.extract_info(url, download=False)
         return info.get("duration", 0)
 
-def save_dimensions_to_csv(url, width, height, csv_filename="video_dimensions.csv"):
+def save_dimensions_to_csv(url, width, height, ratio, csv_filename="video_dimensions.csv"):
     with open(csv_filename, mode='a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow([url, width, height, ratio])
