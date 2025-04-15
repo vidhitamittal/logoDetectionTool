@@ -46,7 +46,7 @@ def get_video_dimensions(url):
    
     cap.release()
 
-    ratio = "Square"
+    ratio = "square"
     if height > width:
         ratio = "vertical"
     elif width > height:
