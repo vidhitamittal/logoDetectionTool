@@ -23,7 +23,10 @@ def save_dimensions_to_csv(url, width, height, ratio, csv_filename="video_dimens
 
 def get_video_dimensions(url):
     output_file = "temp_segment.mp4"
-    
+    if os.path.exists(output_file):
+        os.remove(output_file)
+
+
     ydl_opts = {
         'quiet': True,
         'no_warnings': True,
