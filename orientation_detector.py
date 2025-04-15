@@ -5,7 +5,6 @@ import csv
 import cv2
 import os
 import time
-import re
 
 # Gets the metadata with the ytdlp extract info stuff and then it gets the duration field which gives the duration
 def get_video_duration(url):
