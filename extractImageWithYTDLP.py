@@ -27,7 +27,7 @@ def get_video_dimensions(url):
     ydl_opts = {
         'quiet': True,
         'no_warnings': True,
-        'outtmpl': output_file 
+        'outtmpl': output_file
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
