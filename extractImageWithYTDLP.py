@@ -108,6 +108,35 @@ def get_video_duration(url):
         info = yt.extract_info(url, download=False)
         return info.get("duration", 0)
 
+def save_dimensions_to_csv(url, width, height, csv_filename="video_dimensions.csv"):
+    with open(csv_filename, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([url, width, height])
+
+
+def get_video_dimensions(url):
+    output_file = "temp_segment.mp4"
+    
+    ydl_opts = {
+        'quiet': True,
+        'no_warnings': True,
+        'outtmpl': output_file 
+    }
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([url])
+    
+    cap = cv2.VideoCapture(output_file)
+   
+    if not cap.isOpened():
+        print("nope")
+        return None, None
+   
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+   
+    cap.release()
+    print(width, height)
+    return width, height
 
 
 def find_crop(url, video_id):
@@ -178,7 +207,11 @@ with open('videos.csv', mode='r') as video:
 
 
       # save output of find_crop 
-        find_crop(url, video_id)
+        #find_crop(url, video_id)
+
+        width, height = get_video_dimensions(url)
+        if (width and height):
+            save_dimensions_to_csv(video_id, width, height)
 
         
         print(f'🪺 Sleep #{count} videos finished')
