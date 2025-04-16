@@ -25,7 +25,7 @@ def get_video_dimensions(url):
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
 
-    find_crop(url)
+    find_crop(output_file)
     cap = cv2.VideoCapture(output_file)
    
     if not cap.isOpened():
@@ -46,27 +46,28 @@ def get_video_dimensions(url):
     return width, height, ratio
 
 
+#tried by commenting out 
 
-def find_crop(url):
-    output_file = "temp_segment.mp4"
+def find_crop(output_file):
+    #output_file = "temp_segment.mp4"
     
-    ydl_opts = {
-        'quiet': True,
-        'no_warnings': True,
-        'outtmpl': output_file
-    }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
+    #ydl_opts = {
+    #    'quiet': True,
+    #    'no_warnings': True,
+    #    'outtmpl': output_file
+    #}
+    #with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+     #   ydl.download([url])
         
     commandCrop = (
-        'ffmpeg -i {output_file} -vf cropdetect,metadata=mode=print -f null -'
+        f'ffmpeg -i {output_file} -vf cropdetect,metadata=mode=print -f null -'
     )
     subprocess.run(commandCrop, shell = True)
     print('should have printed the crop values.')
     
-    if os.path.exists(output_file):
-        os.remove(output_file)
-        print("Temporary video deleted.")
+  #  if os.path.exists(output_file):
+   #     os.remove(output_file)
+    #    print("Temporary video deleted.")
     
 
 
