@@ -6,27 +6,66 @@ import cv2
 import os
 import time
 
+def get_video_duration(url):
+    ytdlp_options = {'quiet': True, 'no_warnings': True,}
+    with yt_dlp.YoutubeDL(ytdlp_options) as yt:
+        info = yt.extract_info(url, download=False)
+        return info.get("duration", 0)
+
+
+def get_frame(url, start_time, output_file):
+    # download a small segment .05 seconds starting at start_time.
+    segment_duration = .05
+    end_time = start_time + segment_duration
+    segment_file = "temp_segment.mp4"
+    
+    # Download only the required section.
+    # Note: start_time and end_time are in seconds.
+    command = (
+        f'yt-dlp --download-sections "*{start_time}-{end_time}" -f best '
+        f'-o "{segment_file}" "{url}"'
+    )
+    subprocess.call(command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+
+    
+    # Now extract a single frame from the downloaded segment.
+    # Because the segment’s timeline starts at 0, we seek from 0 (or a small offset if desired).
+    command = (
+        f'ffmpeg -hide_banner -loglevel error -ss 0 -i "{segment_file}" '
+        f'-vframes 1 -q:v 2 -pix_fmt yuvj420p "{output_file}"'
+    )
+    subprocess.call(command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+    # may have issue bc we are not deleting segment_file? hmmmm....
+    return segment_file;
+    
+    # Remove the temporary segment file.
+    #os.remove(segment_file)
+    
+
+
+
+
 def save_dimensions_to_csv(url, width, height, ratio, csv_filename="video_dimensions.csv"):
     with open(csv_filename, mode='a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow([url, width, height, ratio])
         
-def get_video_dimensions(url):
-    output_file = "temp_segment.mp4"
-    if os.path.exists(output_file):
-        os.remove(output_file)
+def get_video_dimensions(segment_file):
+  #  output_file = "temp_segment.mp4"
+  #  if os.path.exists(output_file):
+  #      os.remove(output_file)
 
 
-    ydl_opts = {
-        'quiet': True,
-        'no_warnings': True,
-        'outtmpl': output_file
-    }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
+  #  ydl_opts = {
+  #      'quiet': True,
+  #      'no_warnings': True,
+  #      'outtmpl': output_file
+ #   }
+  #  with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+    #    ydl.download([url])
 
-    find_crop(output_file)
-    cap = cv2.VideoCapture(output_file)
+    find_crop(segment_file)
+    cap = cv2.VideoCapture(segment_file)
    
     if not cap.isOpened():
         print("nope")
@@ -46,37 +85,22 @@ def get_video_dimensions(url):
     return width, height, ratio
 
 
-#tried by commenting out 
 
 def find_crop(output_file):
-    #output_file = "temp_segment.mp4"
-    
-    #ydl_opts = {
-    #    'quiet': True,
-    #    'no_warnings': True,
-    #    'outtmpl': output_file
-    #}
-    #with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-     #   ydl.download([url])
-        
     commandCrop = (
         f'ffmpeg -i {output_file} -vf cropdetect,metadata=mode=print -f null -'
     )
     subprocess.run(commandCrop, shell = True)
     print('should have printed the crop values.')
     
-  #  if os.path.exists(output_file):
-   #     os.remove(output_file)
-    #    print("Temporary video deleted.")
-    
-
 
 
 # this is gonna have arrays of each videos first, middle, and last frames    
 video_frames = []
+#ryan_videos.csv
+with open('ryan_videos.csv', mode='r') as video:
+    #goes through each video in ryan_videos.csv
 
-with open('videos.csv', mode='r') as video:
-    #goes through each video in videos.csv
     the_row = next(csv.reader(video))
     count = 0
     
@@ -87,11 +111,15 @@ with open('videos.csv', mode='r') as video:
         url = "https://www.youtube.com/watch?v=" + video_id
         print(f'---------------------------------------------\n🎬 Starting video #{count}\n---------------------------------------------')
         #creates url
+        duration = get_video_duration(url)
+        middle_second = duration *.5
+        middle_img_file = f"{video_id}_middle.jpg"
+        segment_file = get_frame(url, middle_second, middle_img_file)
 
-
-        width, height, ratio = get_video_dimensions(url)
-        if (width and height):
-            save_dimensions_to_csv(video_id, width, height, ratio)
+        if segment_file:
+            width, height, ratio = get_video_dimensions(segment_file)
+            if (width and height):
+                save_dimensions_to_csv(video_id, width, height, ratio)
 
         
         print(f'🪺 Sleep #{count} videos finished')
