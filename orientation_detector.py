@@ -107,7 +107,7 @@ def find_crop(url, video_id):
 # this is gonna have arrays of each videos first, middle, and last frames    
 video_frames = []
 
-with open('videos.csv', mode='r') as video:
+with open('ryan_videos.csv', mode='r') as video:
     #goes through each video in videos.csv
     the_row = next(csv.reader(video))
     count = 0
