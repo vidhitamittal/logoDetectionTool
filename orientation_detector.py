@@ -117,7 +117,7 @@ with open('ryan_videos.csv', mode='r') as video:
         count+=1
         
         url = "https://www.youtube.com/watch?v=" + video_id
-        print(f'---------------------------------------------\n🎬 Starting video #{count}\n---------------------------------------------')
+        print(f'---------------------------------------------\n🎬 Starting video #{count}, {video_id}\n---------------------------------------------')
         #creates url
 
 
