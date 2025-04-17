@@ -56,12 +56,12 @@ def get_frames():
             try:
                 duration = get_video_duration(url)
             except Exception as e:
-                print(f"❌ Error retrieving duration for video {url}: {e}. Skipping video.")
+                # print(f"❌ Error retrieving duration for video {url}: {e}. Skipping video.")
                 continue
             
             # If no valid duration is found, skip the video.
             if not duration or duration <= 0:
-                print(f"❌ No valid duration for video {url}. Skipping video.")
+                # print(f"❌ No valid duration for video {url}. Skipping video.")
                 continue
 
             # Calculate times for first, middle, and last frames.
@@ -103,11 +103,12 @@ def get_frames():
                 try:
                     os.remove(f)
                 except Exception as e:
-                    print(f"❌ Error removing temporary file {f}: {e}")
+                    # print(f"❌ Error removing temporary file {f}: {e}")
+                    continue
 
             print(f'🪺 Sleep #{count} videos finished')
             time.sleep(2)
         
     return video_frames
         
-print("success")
+# print("success")
