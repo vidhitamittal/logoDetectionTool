@@ -38,7 +38,7 @@ def process_video(video_info):
             print(f"❌ {label} Frame - No logos detected.")
 
     return [url, logo_detected, detections_all]
-
+ 
 if __name__ == "__main__":
     with mp.Pool(mp.cpu_count()) as pool:
         results = pool.map(process_video, video_data)

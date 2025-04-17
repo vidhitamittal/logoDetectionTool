@@ -83,7 +83,7 @@ def get_frames():
                 get_frame(url, last_second, last_file)
                 print(f'🐥 Got last frame for video {count}: {url}')
             except Exception as e:
-                print(f"❌ Error retrieving frames for video {url}: {e}. Skipping video.")
+                # print(f"❌ Error retrieving frames for video {url}: {e}. Skipping video.")
                 # Remove any files that may have been created.
                 for f in [first_file, middle_file, last_file]:
                     if os.path.exists(f):
