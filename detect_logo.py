@@ -19,6 +19,8 @@ def detect_logos(frame, templates):
     for logo_name, template in templates.items():
         # Normal Template Matching
         # Resize template if larger than frame
+        if template is None:
+            continue
         if template.shape[0] > gray.shape[0] or template.shape[1] > gray.shape[1]:
             scale_factor = min(gray.shape[0] / template.shape[0],
                             gray.shape[1] / template.shape[1])
