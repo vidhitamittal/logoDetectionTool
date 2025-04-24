@@ -107,7 +107,7 @@ def find_crop(url, video_id):
 # this is gonna have arrays of each videos first, middle, and last frames    
 video_frames = []
 
-with open('ryan_videos.csv', mode='r') as video:
+with open('ryan_random_1.csv', mode='r') as video:
     #goes through each video in videos.csv
     the_row = next(csv.reader(video))
     count = 0
@@ -115,21 +115,23 @@ with open('ryan_videos.csv', mode='r') as video:
     # im going through the csv file
     for video_id in the_row:
         count+=1
+        try:
+            url = "https://www.youtube.com/watch?v=" + video_id
+            print(f'---------------------------------------------\n🎬 Starting video #{count}, {video_id}\n---------------------------------------------')
+            #creates url
+
+
+            # save output of find_crop 
+            #find_crop(url, video_id)
+
+            width, height, ratio = get_video_dimensions(url)
+            if (width and height):
+                save_dimensions_to_csv(video_id, width, height, ratio)
+
         
-        url = "https://www.youtube.com/watch?v=" + video_id
-        print(f'---------------------------------------------\n🎬 Starting video #{count}, {video_id}\n---------------------------------------------')
-        #creates url
-
-
-      # save output of find_crop 
-        #find_crop(url, video_id)
-
-        width, height, ratio = get_video_dimensions(url)
-        if (width and height):
-            save_dimensions_to_csv(video_id, width, height, ratio)
-
-        
-        print(f'🪺 Sleep #{count} videos finished')
-        time.sleep(2)
+            print(f'🪺 Sleep #{count} videos finished')
+            time.sleep(2)
+        except:
+            print('nope lol')
         
 print("success")
