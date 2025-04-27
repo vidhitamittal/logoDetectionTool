@@ -78,37 +78,11 @@ def find_crop(url, video_id):
     if os.path.exists(output_file):
         os.remove(output_file)
         print("Temporary video deleted.")
-    
-    #boolean in csv: is it cropped. log the console output there. handle errors properly if ur fancy?
-    #crop detect is giving dimensions in the console. to catch this, 
-    # u can use dummy variables, 
-    
-    
-    #result = subprocess.run(commandCrop, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True) # DEVNULL
-
-    #crop_values = re.findall(r'crop=\d+:\d+:\d+:\d+', result.stderr)
-    #print(crop_values)
-    # Just get the most frequent or last one
-    #if crop_values:
-    #    print(f"Suggested crop for {video_id}: {crop_values}")
-    #else:
-    #    print(f"No crop suggestion found for {video_id}")
-
-    # Clean up
-    #if os.path.exists(f'{video_id}.mp4'):
-    #    os.remove(f'{video_id}.mp4')
-#check onedrive? consider turning that off for this project 
-
-
-
-# this is gonna have arrays of each videos first, middle, and last frames    
-video_frames = []
 
 with open('vidhita_hindi_10.csv', mode='r') as video:
     the_row = next(csv.reader(video))
     count = 0
-    
-    # im going through the csv file
+
     for video_id in the_row:
         count+=1
         try:
