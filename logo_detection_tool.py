@@ -108,50 +108,51 @@ def get_frames():
         the_row = next(csv.reader(video))
         count = 0
 
-        for video_id in the_row:
-            count += 1
-            url = "https://www.youtube.com/watch?v=" + video_id
-            print(f'\n🎬 Starting video #{count}: {url}')
+        for video in the_row:
+            if (video[3] == 'vertical' or video[3] == 'square'):
+                count += 1
+                url = "https://www.youtube.com/watch?v=" + video[0]
+                print(f'\n🎬 Starting video #{count}: {url}')
 
-            try:
-                duration = get_video_duration(url)
-            except Exception:
-                continue
-
-            if not duration or duration <= 0:
-                continue
-
-            first_second = duration * 0.01
-            middle_second = duration * 0.5
-            last_second = duration * 0.9
-
-            first_file = f"{video_id}_first.jpg"
-            middle_file = f"{video_id}_middle.jpg"
-            last_file = f"{video_id}_last.jpg"
-
-            try:
-                get_frame(url, first_second, first_file)
-                get_frame(url, middle_second, middle_file)
-                get_frame(url, last_second, last_file)
-            except Exception:
-                for f in [first_file, middle_file, last_file]:
-                    if os.path.exists(f):
-                        os.remove(f)
-                continue
-
-            first_img = cv.imread(first_file)
-            middle_img = cv.imread(middle_file)
-            last_img = cv.imread(last_file)
-
-            video_frames.append([url, first_img, middle_img, last_img])
-
-            for f in [first_file, middle_file, last_file]:
                 try:
-                    os.remove(f)
-                except:
+                    duration = get_video_duration(url)
+                except Exception:
                     continue
 
-            time.sleep(1)
+                if not duration or duration <= 0:
+                    continue
+
+                first_second = duration * 0.01
+                middle_second = duration * 0.5
+                last_second = duration * 0.9
+
+                first_file = f"{video[0]}_first.jpg"
+                middle_file = f"{video[0]}_middle.jpg"
+                last_file = f"{video[0]}_last.jpg"
+
+                try:
+                    get_frame(url, first_second, first_file)
+                    get_frame(url, middle_second, middle_file)
+                    get_frame(url, last_second, last_file)
+                except Exception:
+                    for f in [first_file, middle_file, last_file]:
+                        if os.path.exists(f):
+                            os.remove(f)
+                    continue
+
+                first_img = cv.imread(first_file)
+                middle_img = cv.imread(middle_file)
+                last_img = cv.imread(last_file)
+
+                video_frames.append([url, first_img, middle_img, last_img])
+
+                for f in [first_file, middle_file, last_file]:
+                    try:
+                        os.remove(f)
+                    except:
+                        continue
+
+                time.sleep(1)
 
     return video_frames
 
