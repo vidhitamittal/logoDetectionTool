@@ -74,6 +74,58 @@ def detect_logos(frame, templates):
             detected.append((logo_name, "Combined", final_score))
 
     return detected
+# def detect_logos(frame, templates):
+#     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY) if len(frame.shape) == 3 else frame
+#     gray = cv.equalizeHist(gray)
+#     gray = cv.GaussianBlur(gray, (3, 3), 0)
+#     # Sharpen
+#     kernel = np.array([[0, -1, 0], [-1, 5,-1], [0, -1, 0]])
+#     gray = cv.filter2D(gray, -1, kernel)
+#     edges = cv.Canny(gray, 50, 200)
+
+#     detected = []
+
+#     for logo_name, template in templates.items():
+#         res = cv.matchTemplate(gray, template, cv.TM_CCOEFF_NORMED)
+#         _, template_score, _, _ = cv.minMaxLoc(res)
+
+#         temp_edges = cv.Canny(template, 50, 200)
+#         best = 0
+#         for scale in np.linspace(0.4, 2.2, 18):  # finer scale search
+#             try:
+#                 resized = cv.resize(temp_edges, None, fx=scale, fy=scale)
+#             except:
+#                 continue
+#             if resized.shape[0] > edges.shape[0] or resized.shape[1] > edges.shape[1]:
+#                 continue
+#             res = cv.matchTemplate(edges, resized, cv.TM_CCOEFF_NORMED)
+#             _, val, _, _ = cv.minMaxLoc(res)
+#             best = max(best, val)
+#         multiscale_score = best
+
+#         orb = cv.ORB_create(1000)
+#         kp1, des1 = orb.detectAndCompute(template, None)
+#         kp2, des2 = orb.detectAndCompute(gray, None)
+#         orb_score = 0
+#         if des1 is not None and des2 is not None:
+#             bf = cv.BFMatcher(cv.NORM_HAMMING, crossCheck=True)
+#             matches = bf.match(des1, des2)
+#             if matches:
+#                 orb_score = len(matches) / (len(kp1) + len(kp2)) * 200  # normalize better
+
+#         strong_scores = []
+#         if template_score * 100 >= 50:
+#             strong_scores.append(template_score * 100)
+#         if multiscale_score * 100 >= 55:
+#             strong_scores.append(multiscale_score * 100)
+#         if orb_score >= 8:
+#             strong_scores.append(orb_score)
+
+#         if len(strong_scores) >= 2:
+#             final_score = np.mean(strong_scores)
+#             detected.append((logo_name, "Combined", final_score))
+
+#     return detected
 
 # ------------------- VIDEO FRAME EXTRACTION -------------------
 def get_video_duration(url):
@@ -104,14 +156,14 @@ def get_frame(url, start_time, output_file):
 def get_frames():
     video_frames = []
 
-    with open('videos.csv', mode='r') as video:
-        the_row = next(csv.reader(video))
+    with open('videos.csv', mode='r') as csvfile:  
+        reader = csv.reader(csvfile)
         count = 0
 
-        for video in the_row:
-            if (video[3] == 'vertical' or video[3] == 'square'):
+        for the_row in reader:
+            if the_row[3] in ('vertical', 'square'):   
                 count += 1
-                url = "https://www.youtube.com/watch?v=" + video[0]
+                url = "https://www.youtube.com/watch?v=" + the_row[0]
                 print(f'\n🎬 Starting video #{count}: {url}')
 
                 try:
@@ -126,9 +178,10 @@ def get_frames():
                 middle_second = duration * 0.5
                 last_second = duration * 0.9
 
-                first_file = f"{video[0]}_first.jpg"
-                middle_file = f"{video[0]}_middle.jpg"
-                last_file = f"{video[0]}_last.jpg"
+                # ✅ Use the_row[0], not video[0]
+                first_file = f"{the_row[0]}_first.jpg"
+                middle_file = f"{the_row[0]}_middle.jpg"
+                last_file = f"{the_row[0]}_last.jpg"
 
                 try:
                     get_frame(url, first_second, first_file)
