@@ -8,6 +8,8 @@ We made heavy use of YT-DLP and OpenCV, which you should install in order to use
 ## Orientation Detection
 Jashika and Lance's portion of the project. The orientation detector gets the "true" orientation of a set of randomly-sampled videos by downloading them, cropping out pillarboxing, and accessing the metadata of the cropped video. To run the orientation detector, upload a CSV of your choice where ONLY video IDs (not full URLs) are all in one row, and input the name of the CSV file in line 82. The detector will skip over any videos that are not accessible (private account, deleted video, etc.) and output a CSV only for the videos that worked with columns for the video ID, width in px, height in px, and orientation.
 
+We tested the accuracy of this tool by taking a handful of videos we'd ran it on (300 of 738) and checking if the determined orientation seemed accurate. In this sample, the tool worked correctly for all cases except one video, which was a compilation of other videos with varying orientations.
+
 ## Logo Detection
 James and Vidhita's portion of the project. Binary classifier - whether or not a given video has a logo from a third-party app.
 
